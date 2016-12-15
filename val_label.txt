@@ -1,0 +1,10 @@
+000_dog/dog-1833005_640.jpg 0
+000_dog/dog-55206_640.jpg 0
+000_dog/dog-1873218_640.jpg 0
+001_cat/cat-1892058_640.jpg 1
+001_cat/cat-300572_640.jpg 1
+001_cat/cat-636172_640.jpg 1
+002_rabit/rabbit-1440432_640.jpg 2
+002_rabit/bunny-1672441_640.jpg 2
+002_rabit/rabbit-337223_640.jpg 2
+002_rabit/rabbit-1184702_640.jpg 2
