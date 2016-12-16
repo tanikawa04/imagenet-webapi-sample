@@ -11,19 +11,19 @@ import chainer
 import googlenetbn                  # 他のアーキテクチャを使いたい場合はここを書き換えてください
 
 
-WIDTH = 256
-HEIGHT = 256
-LIMIT = 3
+WIDTH = 256                         # リサイズ後の幅
+HEIGHT = 256                        # リサイズ後の高さ
+LIMIT = 3                           # クラス数
 
 model = googlenetbn.GoogLeNetBN()   # 他のアーキテクチャを使いたい場合はここを書き換えてください
 
 app = Flask(__name__)
 
-# 日本語を ASCII コードに変換しないようにする (curl コマンドで見やすくするため。ASCII に変換しても特に問題ない)
+# JSON 中の日本語を ASCII コードに変換しないようにする (curl コマンドで見やすくするため。ASCII に変換しても特に問題ない)
 app.config['JSON_AS_ASCII'] = False
 
 
-# train_imagenet.py PreprocessedDataset の get_example() を参考にしている
+# train_imagenet.py PreprocessedDataset の get_example() を参考
 def preproduce(image, crop_size, mean):
     # リサイズ
     image = cv2.resize(image, (WIDTH, HEIGHT))
@@ -50,21 +50,22 @@ def hello():
     return 'Hello!'
 
 
+# 画像分類 API
+# http://localhost:8090/predict に画像を投げると JSON で結果が返る
 @app.route('/predict', methods=['POST'])
 def predict():
     # 画像読み込み
     file = request.files['image']
-    # file.save('temp.jpg')
     image = cv2.imdecode(np.fromstring(file.stream.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # 前処理
-    # image = preproduce(cv2.imread('temp.jpg').astype(np.float32), model.insize, mean)
     image = preproduce(image.astype(np.float32), model.insize, mean)
 
     # 推定
     p = model.predict(np.array([image]))[0].data
     indexes = np.argsort(p)[::-1][:LIMIT]
 
+    # 結果を JSON にして返す
     return jsonify({
         'result': [[classes[index][1], float(p[index])] for index in indexes]
     })
